@@ -24,18 +24,28 @@ A Terraform module containing typical AWS CloudFront distribution.
 * `min_ttl` - The minimum amount of time that you want objects to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated.
 * `max_ttl` - The maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request to your origin to determine whether the object has been updated. Only effective in the presence of Cache-Control max-age, Cache-Control s-maxage, and Expires headers.
 * `default_ttl` - The default amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request in the absence of an Cache-Control max-age or Expires header.
+* `create_user_with_policy` - If enabled an IAM user will get created to enable highly granular S3 bucket operation. Disabled by default.
+* `iam_policy` - 
+* `pgp_key` - Base64 of gpg public key used to encrypt the password. Command to get the key: `gpg --export "Name or key id" | base64`. Please note that when you use this only the encrypted value will be available in terraform output.
 * `tags` - A mapping of tags to assign to the resource. By default `Name` is set.
 
 ## Outputs
-* cf_id - The identifier for the distribution. For example: EDFDVBD632BHDS5.
-* cf_arn - The ARN (Amazon Resource Name) for the distribution. For example: arn:aws:cloudfront::123456789012:distribution/EDFDVBD632BHDS5, where 123456789012 is your AWS account ID.
-* cf_status - The current status of the distribution. Deployed if the distribution's information is fully propagated throughout the Amazon CloudFront system.
-* active_trusted_signers - The key pair IDs that CloudFront is aware of for each trusted signer, if the distribution is set up to serve private content with signed URLs.
-* cf_domain_name - The domain name corresponding to the distribution. For example: d604721fxaaqy9.cloudfront.net.
-* cf_etag - The current version of the distribution's information. For example: E2QWRUHAPOMQZL.
-* cf_hosted_zone_id - The CloudFront Route 53 zone ID that can be used to route an Alias Resource Record Set to. This attribute is simply an alias for the zone ID Z2FDTNDATAQYW2.
-* s3_bucket_id - S3 bucket id
-* s3_bucket_arn - S3 bucket arn
+* `cf_id` - The identifier for the distribution. For example: EDFDVBD632BHDS5.
+* `cf_arn` - The ARN (Amazon Resource Name) for the distribution. For example: arn:aws:cloudfront::123456789012:distribution/EDFDVBD632BHDS5, where 123456789012 is your AWS account ID.
+* `cf_status` - The current status of the distribution. Deployed if the distribution's information is fully propagated throughout the Amazon CloudFront system.
+* `active_trusted_signers` - The key pair IDs that CloudFront is aware of for each trusted signer, if the distribution is set up to serve private content with signed URLs.
+* `cf_domain_name` - The domain name corresponding to the distribution. For example: d604721fxaaqy9.cloudfront.net.
+* `cf_etag` - The current version of the distribution's information. For example: E2QWRUHAPOMQZL.
+* `cf_hosted_zone_id` - The CloudFront Route 53 zone ID that can be used to route an Alias Resource Record Set to. This attribute is simply an alias for the zone ID Z2FDTNDATAQYW2.
+* `s3_bucket_id` - S3 bucket id
+* `s3_bucket_arn` - S3 bucket arn
+* `iam_access_key_id` - The access key ID.
+* `iam_access_user` - The IAM user associated with the access key.
+* `iam_access_key_fingerprint` - The fingerprint of the PGP key used to encrypt the secret
+* `iam_access_secret` - The secret access key. Note that this will be written to the state file. Please supply a pgp_key instead, which will prevent the secret from being stored in plain text.
+* `iam_access_encrypted_secret` - The encrypted secret, base64 encoded. ~> NOTE: The encrypted secret may be decrypted using the command line, for example: `terraform output iam_access_secret | base64 --decode | keybase pgp decrypt` or you can use `terraform output iam_access_secret | base64 -D | gpg -d` if you don't use keybase.
+
+
 
 ## Usage example:
 ```

@@ -66,3 +66,16 @@ variable "default_ttl" {
 variable "tags" {
   default = {}
 }
+
+variable "create_user_with_policy" {
+  default = "false"
+}
+
+variable "iam_policy" {
+  type = "string"
+  default = ""
+}
+
+variable "pgp_key" {
+  default = ""
+}

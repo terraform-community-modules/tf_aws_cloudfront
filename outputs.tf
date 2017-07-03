@@ -42,3 +42,29 @@ output "s3_bucket_id" {
 output "s3_bucket_arn" {
   value = "${aws_s3_bucket.bucket.arn}"
 }
+
+
+#The access key ID.
+output "iam_access_key_id" {
+  value = "${aws_iam_access_key.k.id}"
+}
+
+#The IAM user associated with this access key.
+output "iam_access_user" {
+  value = "${aws_iam_access_key.k.user}"
+}
+
+#The fingerprint of the PGP key used to encrypt the secret
+output "iam_access_key_fingerprint" {
+  value = "${aws_iam_access_key.k.key_fingerprint}"
+}
+
+# The secret access key. Note that this will be written to the state file. Please supply a pgp_key instead, which will prevent the secret from being stored in plain text
+output "iam_access_secret" {
+  value = "${aws_iam_access_key.k.secret}"
+}
+
+# The encrypted secret, base64 encoded. ~> NOTE: The encrypted secret may be decrypted using the command line, for example: terraform output secret | base64 --decode | keybase pgp decrypt.
+output "iam_access_encrypted_secret" {
+  value = "${aws_iam_access_key.k.encrypted_secret}"
+}

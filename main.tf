@@ -1,3 +1,55 @@
+# --- IAM user allowing access to the bucket ---
+data "aws_iam_policy_document" "iam_policy" {
+  statement {
+    actions   = [
+      "s3:GetObject",
+      "s3:GetObjectAcl",
+      "s3:PutObject",
+      "s3:PutObjectAcl",
+      "s3:DeleteObject",
+      "s3:*"
+    ]
+    resources = ["arn:aws:s3:::${var.bucket_name}/*"]
+  }
+
+  statement {
+    actions   = [
+      "s3:ListBucket"
+    ]
+    resources = ["arn:aws:s3:::${var.bucket_name}"]
+  }
+
+  statement {
+    actions   = [
+      "s3:GetBucketLocation",
+      "s3:ListAllMyBuckets"
+    ]
+    resources = ["arn:aws:s3:::${var.bucket_name}"]
+  }
+}
+
+resource "aws_iam_user" "u" {
+  name = "cf-user-${var.bucket_name}"
+  path = "/"
+
+  count = "${var.create_user_with_policy == true ? 1:0}"
+}
+
+resource "aws_iam_access_key" "k" {
+  user = "${aws_iam_user.u.name}"
+  pgp_key = "${var.pgp_key}"
+
+  count = "${var.create_user_with_policy == true ? 1:0}"
+}
+
+resource "aws_iam_user_policy" "up" {
+  name = "cf-policy-${var.bucket_name}"
+  user = "${aws_iam_user.u.name}"
+  policy = "${var.iam_policy == "" ? format("%s", data.aws_iam_policy_document.iam_policy.json) : var.iam_policy}"
+
+  count = "${var.create_user_with_policy == true ? 1:0}"
+}
+
 # --- S3 bucket ---
 
 data "aws_iam_policy_document" "s3_policy_cf_bucket" {
